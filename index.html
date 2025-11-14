@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nə dərdin var?</title>
+  <link rel="icon" href="data:," />
+  <style>
+    /* styles.css qısa versiya */
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#ffd166;--text:#e6eef8}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, sans-serif;background:linear-gradient(180deg,#071029,#0f1724);color:var(--text)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:100%;max-width:560px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:14px;padding:30px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    h1{margin:0 0 12px;font-size:22px}
+    p.lead{margin:0 0 20px;color:rgba(230,238,248,0.8)}
+    form{display:flex;gap:10px;flex-direction:column}
+    textarea{resize:none;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-height:110px;font-size:15px}
+    .actions{display:flex;gap:10px;align-items:center}
+    button{background:var(--accent);border:0;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600}
+    .surprise{margin-top:18px;padding:16px;border-radius:10px;background:rgba(255,255,255,0.03);display:none}
+    .small{font-size:13px;color:rgba(230,238,248,0.7)}
+    @media(max-width:480px){.card{padding:18px} h1{font-size:18px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">Nə dərdin var?</h1>
+      <p class="lead">Yaz və Enter-ə bas — sənə sürpriz cavab göstərəcəyik.</p>
+
+      <form id="painForm" autocomplete="off" novalidate>
+        <label for="painInput" class="small" style="display:none">Nə dərdin var?</label>
+        <textarea id="painInput" placeholder="Məsələn: məktəb, iş, ürək..." aria-label="Nə dərdin var?"></textarea>
+
+        <div class="actions">
+          <button type="submit" id="sendBtn">Göndər</button>
+          <div class="small" style="margin-left:auto">Hamıya eyni cavab verilir</div>
+        </div>
+
+        <div id="surprise" class="surprise" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // script.js qısa versiya
+    (function(){
+      const form = document.getElementById('painForm');
+      const input = document.getElementById('painInput');
+      const surprise = document.getElementById('surprise');
+
+      // burada sürpriz cavabı yaz
+      const SURPRISE_ANSWER = "DƏRDİNƏ SOXUM.";
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const text = input.value.trim();
+
+        // İstəsən boş buraxma yoxlaması:
+        if (!text) {
+          // qısa animasiya/uyarı
+          input.style.border = "1px solid rgba(255,50,50,0.9)";
+          input.focus();
+          setTimeout(()=> input.style.border = "1px solid rgba(255,255,255,0.04)", 1400);
+          return;
+        }
+
+        // Əgər məxfilik təmin etmək istəyirsənsə, inputu saxlamırsan.
+        // Sadəcə sürprizi göstər:
+        surprise.style.display = "block";
+        surprise.innerHTML = "<strong>" + escapeHtml(SURPRISE_ANSWER) + "</strong>";
+
+        // optional: inputu təmizlə və ya saxla
+        input.value = "";
+      });
+
+      // kiçik funksiya HTML escape üçün
+      function escapeHtml(s){
+        return s.replace(/[&<>"']/g, function(m){
+          return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m];
+        });
+      }
+
+      // Enter düyməsi ilə submitt etmək: textarea-da Shift+Enter yeni sətir yazmaq üçün saxlanır
+      input.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' && !e.shiftKey){
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
